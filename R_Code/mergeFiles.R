@@ -1,5 +1,7 @@
 ## Getting and Cleaning Data: Course project
 ############################################
+# Import libraries
+library(dplyr)
 
 # set working directory
 setwd("/home/ainsley/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project")
@@ -70,3 +72,35 @@ mergeFiles <- function(directory) {
 # Create two merged files: One for training data and one for test data
 mergeTrain <- mergeFiles(trainDir)
 mergeTest <- mergeFiles(testDir)
+
+# Create a single merged file with both training and test data
+# Lengths don't match, so these will be merged as a long file, not a wide one
+# Create a vector that will be used to distinguish between training and test data
+# use the length of the first column of each data frame to determine vector length
+dataType <- c(rep("train",length(mergeTrain[,1])),rep("test",length(mergeTest[,1])))
+# Get new variable names for merged data set
+newVars <- sub("_test","",names(mergeTest))
+
+# Rename the variables in each data set
+names(mergeTest) <- newVars
+names(mergeTrain) <- newVars
+
+# Merge the data files
+finalMerge <- rbind(mergeTrain,mergeTest)
+
+# Add the data type column
+finalMerge$data_type <- dataType
+
+# Use means to double check merge:
+by_dt <- group_by(finalMerge,data_type)
+summarize(by_dt,mean(body_acc_x))
+# original files
+mean(mergeTest$body_acc_x)
+mean(mergeTrain$body_acc_x)
+# merge is okay
+
+# house cleaning... delete unnecessary data sets
+rm(mergeTest,mergeTrain,dataType,by_dt)
+
+# Write merged file to CSV
+write.csv(finalMerge,"mergedData.csv",row.names=F,col.names=T)
