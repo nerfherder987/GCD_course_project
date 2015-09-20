@@ -1,7 +1,13 @@
 ## Getting and Cleaning Data: Course project
+############################################
+
 # set working directory
 setwd("/home/ainsley/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project")
+
+############ Get data info ###############
+# Directory where training data is stored
 trainDir <- "/home/ainsley/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project/UCI HAR Dataset/train/Inertial Signals"
+# Directory where test data is stored
 testDir <- "/home/ainsley/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project/UCI HAR Dataset/test/Inertial Signals"
 
 # list files in the training data and save list as variable
@@ -10,17 +16,15 @@ trainData <- list.files(paste(getwd(),"/UCI HAR Dataset/train/Inertial Signals",
 # list files in the test data and save list as variable
 testData <- list.files(paste(getwd(),"/UCI HAR Dataset/test/Inertial Signals",sep=""))
 
-# List other files in directory and save list as variable
+# List other files in UCI HAR Dataset directory and save list as variable
 otherFiles <- list.files(paste(getwd(),"/UCI HAR Dataset",sep=""))
 
-# Load features and activity labels
+# Load features and activity labels as a data frame
 features <- read.table("UCI HAR Dataset/features.txt",header=F,stringsAsFactors=F)
-names(features) <- c("rowNum","feature")
-
+names(features) <- c("rowNum","feature") # set variable names
 act.labels <- read.table("UCI HAR Dataset/activity_labels.txt",header=F,stringsAsFactors=F)
-names(act.labels) <- c("rowNum","activity")
+names(act.labels) <- c("rowNum","activity") # set variable names
 
-# 1. Merge the training and the test sets to create one data set.
 ## get column names for training and test data sets
 trainVars <- sub(".txt","",trainData)
 testVars <- sub(".txt","",testData)
@@ -28,7 +32,13 @@ testVars <- sub(".txt","",testData)
 # list of file locations
 testFiles <- paste(testDir,"/",testData,sep="")
 
-# arguments are data directory and list of file names
+##################################################################
+# 1. Merge the training and the test sets to create one data set.#
+##################################################################
+#    Merge Function:
+#    The only argument for the mergeFiles function is the data directory
+#    Reads each file and merges the columns into a single data frame (returns df)
+#    Assumes all files have the same number of cases.
 mergeFiles <- function(directory) {
   # Get a list of all the files in the directory specified
   fileList <- list.files(directory,pattern=".txt")
@@ -57,9 +67,6 @@ mergeFiles <- function(directory) {
   return(merged)
 }
 
-
-# 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
-# 3. Uses descriptive activity names to name the activities in the data set
-# 4. Appropriately labels the data set with descriptive variable names. 
-# 5. From the data set in step 4, creates a second, independent tidy data set with the average of 
-#    each variable for each activity and each subject.
+# Create two merged files: One for training data and one for test data
+mergeTrain <- mergeFiles(trainDir)
+mergeTest <- mergeFiles(testDir)
