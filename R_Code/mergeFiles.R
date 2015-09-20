@@ -29,14 +29,18 @@ testVars <- sub(".txt","",testData)
 testFiles <- paste(testDir,"/",testData,sep="")
 
 # arguments are data directory and list of file names
-mergeFiles <- function(directory, fileList) {
+mergeFiles <- function(directory) {
+  # Get a list of all the files in the directory specified
+  fileList <- list.files(directory,pattern=".txt")
   # Adds the specified directory to each file name in fileList
   # so that each element in allFiles is the complete path to a data file
+  # Did this because I didn't want to have to change the working directory in the function
   allFiles <- paste(directory,"/",fileList,sep="")
-  # object to hold merged data
+  # Null object to hold merged data
   merged <- NULL
   # Create variable names for merged file from file list
   varNames <- sub(".txt","",fileList)
+  # Read in each file and merge 
   for (i in 1:length(allFiles)){
     # Couldn't get this to read the file in as just one column
     #current.file <- read.table(allFiles[[i]],header=FALSE,sep=" ")
