@@ -74,7 +74,7 @@ mergeFiles <- function(data_dir,data_type) {
   # 7. Add a column to the end marking the type of data this is:
   y.data$data_type <- data_type
   ## 7.1 - arrange columns
-  y.data <- y.data[,c(1,2,3,90,4:89)]
+  y.data <- y.data[,c(1,2,89,90,3:88)]
   
   # 8. Return the merged data set
   return(y.data)
@@ -89,6 +89,10 @@ mergeTest <- mergeFiles(dataDir,"test")
 ################# FINAL MERGE #######################
 ###### Merge the training and test data files ######
 dataMerge <- rbind(mergeTrain,mergeTest)
+
+#### Fix the ugly column names ####
+names(dataMerge)[5:90] <- gsub("\\()","",names(dataMerge)[5:90])
+names(dataMerge)[5:90] <- gsub("-","_",names(dataMerge)[5:90])
 
 ##############################################################################################
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.##
@@ -123,10 +127,15 @@ mergeSummary <- dataMerge.group %>% summarize_each(funs(mean),5:90)
 ### grouped. Won't sort outside of groupings
 # groups(mergeSummary) # See if data frame has been grouped
 mergeSummary <- ungroup(mergeSummary)
-mergeSummary <- mergeSummary[,c(1,3,2,4:88)] # sort columns
 mergeSummary <- arrange(mergeSummary,desc(data_type),subject,actLabel)
 
 ###############################
 ## Save data set from Step 5 ##
 ###############################
 write.table(mergeSummary,"Summary_step5.txt",col.names=TRUE,row.names=FALSE,sep="\t")
+
+############################################################
+## Save text files with the variable names from each file ##
+############################################################
+write.table(names(dataMerge),"varNames_merge.txt",col.names=F,row.names=F,quote=F)
+write.table(names(mergeSummary),"varNames_summary.txt",col.names=F,row.names=F,quote=F)
