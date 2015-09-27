@@ -2,8 +2,7 @@
 library(dplyr)
 
 # Set working directory:
-# <<<Redact before submit?>>>
-setwd("/home/ainsley/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project")
+setwd("/home/user/Documents/Data_Science_Coursera/Getting_and_Cleaning_Data/GCD_course_project")
 
 ######################################################################
 ## 1. Merges the training and the test sets to create one data set. ##
@@ -133,6 +132,8 @@ mergeSummary <- arrange(mergeSummary,desc(data_type),subject,actLabel)
 ## Save data set from Step 5 ##
 ###############################
 write.table(mergeSummary,"Summary_step5.txt",col.names=TRUE,row.names=FALSE,sep="\t")
+# not required for project
+write.table(dataMerge,"merged_UCI_HAR_data.txt",col.names=TRUE,row.names=F,sep="\t")
 
 ############################################################
 ## Save text files with the variable names from each file ##
