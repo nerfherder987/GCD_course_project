@@ -35,7 +35,7 @@ The file *merged_UCI_HAR_data.txt* includes the raw data used to produce the sum
 
 activity
 subject
-actLabel
+activity_label
 data_type
 tBodyAcc_mean_X
 tBodyAcc_mean_Y

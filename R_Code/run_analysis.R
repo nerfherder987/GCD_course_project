@@ -26,7 +26,7 @@ mergeFiles <- function(data_dir,data_type) {
   # 2. Load activity labels:
   # Weak... I just hard coded this
   act.labels <- read.table("./UCI HAR Dataset/activity_labels.txt",
-                           col.names=c("activity","actLabel"))
+                           col.names=c("activity","activity_label"))
   
   # 3. Load feature labels
   # Same here
@@ -118,7 +118,7 @@ names(dataMerge)[5:90] <- gsub("-","_",names(dataMerge)[5:90])
 #    average of each variable for each activity and each subject.                      ##
 #########################################################################################
 # 5.1 Group by activity and subject
-dataMerge.group <- group_by(dataMerge,data_type,actLabel,subject)
+dataMerge.group <- group_by(dataMerge,data_type,activity_label,subject)
 
 mergeSummary <- dataMerge.group %>% summarize_each(funs(mean),5:90)
 
@@ -126,7 +126,7 @@ mergeSummary <- dataMerge.group %>% summarize_each(funs(mean),5:90)
 ### grouped. Won't sort outside of groupings
 # groups(mergeSummary) # See if data frame has been grouped
 mergeSummary <- ungroup(mergeSummary)
-mergeSummary <- arrange(mergeSummary,desc(data_type),subject,actLabel)
+mergeSummary <- arrange(mergeSummary,desc(data_type),subject,activity_label)
 
 ###############################
 ## Save data set from Step 5 ##
