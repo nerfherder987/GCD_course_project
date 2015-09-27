@@ -1,14 +1,15 @@
 # Data Science: Getting and Cleaning Data 
 ## Course Project
 
-
-**Project Instructions:** [Link to project instructions] (https://class.coursera.org/getdata-032/human_grading/view/courses/975116/assessments/3/submissions)
+**Project Instructions:** [Getting and Cleaning Data: Course Project] (https://class.coursera.org/getdata-032/human_grading/view/courses/975116/assessments/3/submissions)
 
 Instructions: a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md
 
-## Description of Data Processing
+###### Description of Data Processing
 
-The file run_analysis.R includes all code used to produce the submitted data files. The mergeFiles function, included in the script, creates merged data files for each data type (training,test). The function reads the following data files from the UCI HAR Dataset directory:
+The file run_analysis.R includes all code used to produce the submitted data files. The mergeFiles function, included in the script file, creates merged data files for each data type (training,test). All directory paths used in the script are described relative to the user's current working directory, with the data directory (UCI HAR Dataset) within the user's current working directory. For additional detail on the UCI HAR Dataset, please see the documentation included with that dataset: [Download UCI HAR Dataset] (https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip) 
+
+The mergeFiles function reads the following data files from the UCI HAR Dataset directory:
 
 * **features.txt:** Feature list
 
@@ -25,18 +26,19 @@ The file run_analysis.R includes all code used to produce the submitted data fil
 * **test/subject_test.txt:** Each row identifies the subject who performed the activity for each window sample. Its range is from 2 to 24. (n = 9 unique subjects)
 **NOTE:** There is no overlap between subjects providing training and those providing test data. 
 
-The script first reads activity_labels.txt and features.txt (@hich is kind of wasteful resource-wise. Ooops!). Next, it reads the training/test labels, subject, and training/test data sets. The column names for the feature columns in the training/test data sets are taken from the names in the file features.txt. Then the three data sources are merged using the cbind function. The activity_labels.txt file is then merged with the combined data set so that the numeric code for each activity has a text label associated with it. A new variable, "data_type", is added to indicate whether the current file is training or test data.
+The script first reads in the text files that store the activity labels (activity_labels.txt) and feature list (features.txt - I realize it's wasteful resource-wise to read those each time the function is called. Ooops!). Next, depending on the data type specified (training, test), the function reads the labels (y_train.txt, y_test.txt), subject (subject_train.txt, subject_test.txt), and data sets(X_train.txt, X_test.txt). The column names for the feature columns in the training/test data sets are taken from the names in the file features.txt. After column names are added, the column names are searched, and only those feature columns with either "mean" or "std" in the variable name are retained in the data set. Next, the three data sources are merged using the cbind function. The activity_labels.txt file is then merged with the combined data set so that the numeric code for each activity has a text label associated with it. A new variable, "data_type", is added to indicate whether the current file is training or test data, and the column order is modified so that the identifier variables are listed first (subject, data_type, activity, activity_label).
 
-Further processing of the data files is done outside of the mergeFiles function. Merged test and training data files are created, then these files are merged using the rbind function. After the messy column names are neatened, the merged data file is grouped by (using dplyr group_by) data type, activity label, and subject. A summary file is created using the summarize_each function (also from the dplyr package). Finally, text data files are saved to the current working directory.
+Further processing of the data files is done outside of the mergeFiles function. Merged test and training data files are created, then these files are merged into a single data set using the rbind function. After the messy column names are neatened (remove () and dashes, replace with underscore), the merged data file is grouped by (using dplyr group_by) data type, activity label, and subject. A summary file is created using the summarize_each function (also from the dplyr package). Finally, merged (merged_UCI_HAR_data.txt) and summary (Summary_step5.txt) text data files are saved to the current working directory.
 
-The file *merged_UCI_HAR_data.txt* includes the raw data used to produce the summary file *Summary_step5.txt*. Each row in merged_UCI_HAR_data.txt includes summary statistics for several measures for 
 
 **Variables included in processed data sets**
 
-activity
-subject
-activity_label
-data_type
+VARIABLE NAME                |                  DESCRIPTION
+---------------------------------------------------------------------
+subject | Subject identifier (numeric; range 1 - 30)
+activity | Numeric activity label (range 1 - 6)
+activity_label | Text activity label (e.g. WALKING, STANDING)
+data_type - 
 tBodyAcc_mean_X
 tBodyAcc_mean_Y
 tBodyAcc_mean_Z
