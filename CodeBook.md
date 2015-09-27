@@ -36,9 +36,13 @@ Further processing of the data files is done outside of the mergeFiles function.
 VARIABLE NAME                |                  DESCRIPTION
 ---------------------------------------------------------------------
 subject | Subject identifier (numeric; range 1 - 30)
+
 activity | Numeric activity label (range 1 - 6)
+
 activity_label | Text activity label (e.g. WALKING, STANDING)
-data_type - 
+
+data_type | Data collection phase (training, test)
+
 tBodyAcc_mean_X
 tBodyAcc_mean_Y
 tBodyAcc_mean_Z
