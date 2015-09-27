@@ -27,7 +27,7 @@ mergeFiles <- function(data_dir,data_type) {
   # 2. Load activity labels:
   # Weak... I just hard coded this
   act.labels <- read.table("./UCI HAR Dataset/activity_labels.txt",
-                           col.names=c("actNumber","actLabel"))
+                           col.names=c("activity","actLabel"))
   
   # 3. Load feature labels
   # Same here
@@ -65,11 +65,11 @@ mergeFiles <- function(data_dir,data_type) {
   y.data <- read.table(paste(data_dir,y_file,sep=""),
                      col.names="activity")
   
-  # 5. Merge activity training labels from dataset with text labels
-  y.data <- merge(y.data,act.labels,by.x="activity",by.y="actNumber")
-  
-  # 6. Merge data with subject and activity labels
+  # 5. Merge data with subject and activity labels
   y.data <- cbind(subs,y.data,x.data)
+  
+  # 6. Merge activity training labels from dataset with text labels
+  y.data <- merge(y.data,act.labels,by="activity")
   
   # 7. Add a column to the end marking the type of data this is:
   y.data$data_type <- data_type
@@ -93,10 +93,10 @@ dataMerge <- rbind(mergeTrain,mergeTest)
 ##############################################################################################
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.##
 ##############################################################################################
-## I really don't completely get what this means. I'm assuming it means that I need only 
-## keep those columns in the data frame that have to do with means or standard deviations
-## for the measurements. This is accomplished in the mergeFiles function: Only those columns
-## in X_xxxx.txt that have "mean" or "std" in the column name are retained
+## I'm assuming this means that I need only keep those columns in the data frame that have 
+## to do with means or standard deviations for the measurements. This is accomplished in 
+## the mergeFiles function: Only those columns in X_xxxx.txt that have "mean" or "std" 
+## in the column name are retained
 
 ##############################################################################
 # 3. Uses descriptive activity names to name the activities in the data set ##
@@ -114,4 +114,19 @@ dataMerge <- rbind(mergeTrain,mergeTest)
 # 5. From the data set in step 4, creates a second, independent tidy data set with the ##
 #    average of each variable for each activity and each subject.                      ##
 #########################################################################################
+# 5.1 Group by activity and subject
+dataMerge.group <- group_by(dataMerge,data_type,actLabel,subject)
 
+mergeSummary <- dataMerge.group %>% summarize_each(funs(mean),5:90)
+
+### Ungroup mergeSummary so it can be sorted. Arrange function doesn't work when it is 
+### grouped. Won't sort outside of groupings
+# groups(mergeSummary) # See if data frame has been grouped
+mergeSummary <- ungroup(mergeSummary)
+mergeSummary <- mergeSummary[,c(1,3,2,4:88)] # sort columns
+mergeSummary <- arrange(mergeSummary,desc(data_type),subject,actLabel)
+
+###############################
+## Save data set from Step 5 ##
+###############################
+write.table(mergeSummary,"Summary_step5.txt",col.names=TRUE,row.names=FALSE,sep="\t")
